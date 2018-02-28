@@ -2,3 +2,4 @@ MANIFEST
 build/*
 dist/*
 *.pyc
+python3_lxc.egg-info/
