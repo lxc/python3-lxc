@@ -84,7 +84,7 @@ class LxcBuildExtCommand(BuildExtCommand):
         super(LxcBuildExtCommand, self).build_extensions()
 
 
-setup(name='lxc-python3',
+setup(name='python3-lxc',
       version='0.1',
       description='Python3 bindings for LXC',
       long_description='The lxc-python3 package contains LXC bindings for python3',
