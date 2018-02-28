@@ -29,6 +29,7 @@ import pkg_resources
 pkg_resources.extern.packaging.version.Version = \
     pkg_resources.SetuptoolsLegacyVersion
 
+import glob
 import os
 import subprocess
 
