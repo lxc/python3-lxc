@@ -24,11 +24,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
 # USA
 
-# Allow whatever we want in version numbers
-import pkg_resources
-pkg_resources.extern.packaging.version.Version = \
-    pkg_resources.SetuptoolsLegacyVersion
-
 import glob
 import os
 import subprocess
