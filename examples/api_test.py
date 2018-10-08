@@ -129,6 +129,19 @@ else:
 # A few basic checks of the current state
 assert(len(ips) > 0)
 
+# Getting config items under indexed key
+print("Accessing indexed config entries")
+count = 0
+networks = len(set(container.get_config_item('lxc.network')))
+network_keys = ['lxc.network.type','lxc.network.link','lxc.network.flags','lxc.netwo
+rk.hwaddr',]
+while (count < networks):
+    for nk in network_keys:
+        new_key = nk.replace('lxc.network.','lxc.network.{}.'.format(count))        
+        print(container.get_config_item(new_key))
+    count +=1
+    
+
 ## Test running config
 assert(container.name == CONTAINER_NAME
        == container.get_config_item("lxc.uts.name")
