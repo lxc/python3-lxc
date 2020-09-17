@@ -124,7 +124,10 @@ class ContainerNetworkList():
         return ContainerNetwork(self.container, index)
 
     def __len__(self):
-        values = self.container.get_config_item("lxc.net")
+        try:
+            values = self.container.get_config_item("lxc.net")
+        except KeyError:
+            values = None
 
         if values:
             return len(values)
