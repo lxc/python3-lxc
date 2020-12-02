@@ -217,6 +217,7 @@ class Container(_lxc.Container):
             "args" (optional) is a tuple of arguments to pass to the
             template. It can also be provided as a dict.
         """
+
         if isinstance(args, dict):
             tmp_args = []
             for item in args.items():
@@ -230,7 +231,22 @@ class Container(_lxc.Container):
         template_args['args'] = tuple(args)
         if bdevtype:
             template_args['bdevtype'] = bdevtype
+        if not self.defined:
+           self.save_config()
         return _lxc.Container.create(self, **template_args)
+
+    def destroy(self):
+        """
+            Deletes the container and clears its config
+        """
+
+        if not _lxc.Container.destroy(self):
+            return False
+        
+        # Clear the configuration to match destroyed container state.
+        self.clear_config()
+
+        return True
 
     def clone(self, newname, config_path=None, flags=0, bdevtype=None,
               bdevdata=None, newsize=0, hookargs=()):
