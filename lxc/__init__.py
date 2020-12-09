@@ -119,7 +119,8 @@ class ContainerNetworkList():
 
     def __getitem__(self, index):
         if index >= len(self):
-            raise IndexError("list index out of range")
+            # If index of network is out of bounds, create a new network.
+            self.add("temp_type")
 
         return ContainerNetwork(self.container, index)
 
