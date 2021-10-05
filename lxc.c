@@ -939,11 +939,13 @@ Container_create(Container *self, PyObject *args, PyObject *kwds)
         }
     }
 
+    Py_BEGIN_ALLOW_THREADS
     if (self->container->create(self->container, template_name, bdevtype, &fs_specs,
                                 flags, create_args))
         retval = Py_True;
     else
         retval = Py_False;
+    Py_END_ALLOW_THREADS
 
     if (vargs) {
         /* We cannot have gotten here unless vargs was given and create_args
