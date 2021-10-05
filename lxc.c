@@ -849,9 +849,11 @@ Container_clone(Container *self, PyObject *args, PyObject *kwds)
         assert(config_path != NULL);
     }
 
+    Py_BEGIN_ALLOW_THREADS
     new_container = self->container->clone(self->container, newname,
                                            config_path, flags, bdevtype,
                                            bdevdata, newsize, hookargs);
+    Py_END_ALLOW_THREADS
 
     Py_XDECREF(py_config_path);
 
