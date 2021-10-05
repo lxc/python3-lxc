@@ -209,7 +209,7 @@ class Container(_lxc.Container):
 
         return _lxc.Container.set_config_item(self, key, value)
 
-    def create(self, template=None, flags=0, args=(), bdevtype=None):
+    def create(self, template=None, flags=0, args=(), bdevtype=None, fssize=0):
         """
             Create a new rootfs for the container.
 
@@ -235,6 +235,7 @@ class Container(_lxc.Container):
         template_args['args'] = tuple(args)
         if bdevtype:
             template_args['bdevtype'] = bdevtype
+        template_args['fssize'] = fssize
         if not self.defined:
            self.save_config()
         return _lxc.Container.create(self, **template_args)
