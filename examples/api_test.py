@@ -118,7 +118,7 @@ print("Getting the IP addresses")
 
 count = 0
 ips = []
-while not ips or count == 10:
+while not ips and count != 30:
     ips = container.get_ips()
     time.sleep(1)
     count += 1
