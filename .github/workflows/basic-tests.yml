@@ -1,0 +1,71 @@
+name: Basic Tests
+
+on:
+  push:
+    branches:
+      - '*'
+    tags-ignore:
+      - '*'
+    pull_request:
+
+jobs:
+  basic-tests:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install setuptools
+        run: python -m pip install setuptools
+
+      - name: Install LXC
+        run: sudo apt-get install -y lxc lxc-dev
+
+      - name: Configure LXC
+        run: |
+          mkdir -p ~/.config/lxc /var/tmp/lxc
+          cat >~/.config/lxc/lxc.conf <<EOF
+          lxc.lxcpath = /var/tmp/lxc
+          EOF
+          cat >~/.config/lxc/default.conf <<EOF
+          lxc.include = /etc/lxc/default.conf
+          lxc.idmap = u 0 165536 65536
+          lxc.idmap = g 0 165536 65536
+          lxc.apparmor.profile = unconfined
+          EOF
+          echo "$(id -un) veth lxcbr0 10" | sudo tee -a /etc/lxc/lxc-usernet
+
+      - name: Build module
+        run: python3 setup.py build
+
+      - name: Install module
+        run: pip install .
+
+      - name: Enable unprivileged user namespaces
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+
+      - name: Create container
+        run: >
+          python3 -c 'import lxc;exit(0 if lxc.Container("mycontainer").create("download", 0, {"dist": "alpine", "release": "edge", "arch": "amd64"}) else 1)'
+
+      - name: Start container
+        run: python3 -c 'import lxc;exit(0 if lxc.Container("mycontainer").start() else 1)'
+
+      - name: Run command inside container
+        run: python3 -c 'import lxc;exit(lxc.Container("mycontainer").attach_wait(lxc.attach_run_command, ["uname", "-a"]))'
+
+      - name: Stop container
+        if: success() || failure()
+        run: python3 -c 'import lxc;exit(0 if lxc.Container("mycontainer").stop() else 1)'
+
+      - name: Destroy container
+        if: success() || failure()
+        run: python3 -c 'import lxc;exit(0 if lxc.Container("mycontainer").destroy() else 1)'
