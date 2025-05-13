@@ -198,7 +198,11 @@ static int lxc_attach_python_exec(void* _payload)
      * container. As lxc_attach() calls fork() PyOS_AfterFork should be called
      * in the new process if the Python interpreter will continue to be used.
      */
+#if PY_VERSION_HEX >= 0x030700F0
+    PyOS_AfterFork_Child();
+#else
     PyOS_AfterFork();
+#endif
 
     struct lxc_attach_python_payload *payload =
         (struct lxc_attach_python_payload *)_payload;
@@ -748,8 +752,14 @@ Container_attach_and_possibly_wait(Container *self, PyObject *args,
     if (!options)
         return NULL;
 
+#if PY_VERSION_HEX >= 0x030700F0
+    PyOS_BeforeFork();
+#endif
     ret = self->container->attach(self->container, lxc_attach_python_exec,
                                   &payload, options, &pid);
+#if PY_VERSION_HEX >= 0x030700F0
+    PyOS_AfterFork_Parent();
+#endif
     if (ret < 0)
         goto out;
 
