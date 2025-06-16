@@ -81,7 +81,7 @@ again:
 }
 
 /* Copied from lxc/confile.c, with HAVE_SYS_PERSONALITY_H check removed */
-signed long lxc_config_parse_arch(const char *arch)
+static signed long lxc_config_parse_arch(const char *arch)
 {
     struct per_name {
         char *name;
