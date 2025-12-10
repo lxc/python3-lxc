@@ -66,7 +66,7 @@ except:
 print("Creating rootfs using 'download', arch=%s" % arch)
 container.create("download", 0,
                  {"dist": "ubuntu",
-                  "release": "xenial",
+                  "release": "noble",
                   "arch": arch})
 
 assert(container.defined)
@@ -141,10 +141,10 @@ assert(container.name == CONTAINER_NAME
 
 ## Testing cgroups a bit
 print("Testing cgroup API")
-max_mem = container.get_cgroup_item("memory.max_usage_in_bytes")
-current_limit = container.get_cgroup_item("memory.limit_in_bytes")
-assert(container.set_cgroup_item("memory.limit_in_bytes", max_mem))
-assert(container.get_cgroup_item("memory.limit_in_bytes") != current_limit)
+max_mem = container.get_cgroup_item("memory.peak")
+current_limit = container.get_cgroup_item("memory.max")
+assert(container.set_cgroup_item("memory.max", max_mem))
+assert(container.get_cgroup_item("memory.max") != current_limit)
 
 ## Freezing the container
 print("Freezing the container")
